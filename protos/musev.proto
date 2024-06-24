@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.arkai.inference.musev";
+option java_outer_classname = "MuseVService";
+option objc_class_prefix = "museV";
+option go_package = "gitlab.in.promiseland.live/ark/ark-api/ai_grpc";
+
+package musev;
+
+service MuseV {
+  rpc Generate(Img2VideoInputMsg) returns (Img2VideoResponse) {}
+}
+
+message Img2VideoInputMsg {
+  string conditionImages = 1;         // oss源文件路径名（原图）
+  string ipadapterImage = 2;         // oss源文件路径名（原图），默认空
+  string referImage = 3;         // oss源文件路径名（原图），默认空
+  string prompt = 4;
+  int32 width = 5;
+  int32 height = 6;
+  float scaleRatio = 7;
+  float eyeBlinksFactor = 8;
+  string dest=9;
+  int32 fps = 10;
+  int32 length = 11;
+}
+
+message Img2VideoResponse {
+  bool result = 1;
+  string dest = 2;
+}

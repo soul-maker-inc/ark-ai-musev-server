@@ -64,7 +64,6 @@ def load_referencenet(
     Returns:
         nn.Module: The loaded ReferenceNet model.
     """
-
     if isinstance(sd_referencenet_model, str):
         referencenet = ReferenceNet2D.from_pretrained(
             sd_referencenet_model,

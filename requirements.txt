@@ -93,3 +93,8 @@ spaces
 # https://mirrors.cloud.tencent.com/pypi/packages/de/a6/a49d5af79a515f5c9552a26b2078d839c40fcf8dccc0d94a1269276ab181/tb_nightly-2.1.0a20191022-py3-none-any.whl
 basicsr
 # numpy==1.23.5
+minio==7.2.4
+grpcio>=1.62.1
+grpcio-reflection==1.48.2
+grpcio-tools>=1.48.2
+simple-file-checksum
