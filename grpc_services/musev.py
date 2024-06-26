@@ -56,17 +56,16 @@ def Text2Video( device,
                 output_dir,
                 seed,
                 fps,
-                w,
-                h,
                 video_len,
                 img_edge_ratio,
-                motion_speed):
+                motion_speed,
+                n_batch):
 
     logger.setLevel('DEBUG')
     overwrite = False
     cross_attention_dim = 768
     time_size = video_len  # 一次视频生成的帧数
-    n_batch = 1  # 按照time_size的尺寸 生成n_batch次，总帧数 = time_size * n_batch
+    # n_batch = 1  # 按照time_size的尺寸 生成n_batch次，总帧数 = time_size * n_batch
     fps = fps
     fix_condition_images = False
     use_condition_image = True  # 当 test_data 中有图像时，作为初始图像
@@ -75,8 +74,6 @@ def Text2Video( device,
         True
     )  # 视频加噪过程中是否使用首帧 condition_images
     img_weight = 1e-3
-    height = h  # 如果测试数据中没有单独指定宽高，则默认这里
-    width = w  # 如果测试数据中没有单独指定宽高，则默认这里
     img_length_ratio = img_edge_ratio  # 如果测试数据中没有单独指定图像宽高比resize比例，则默认这里
     n_cols = 3
     noise_type = 'video_fusion'
@@ -89,7 +86,7 @@ def Text2Video( device,
     save_filetype = 'mp4'
     save_images = False
     sd_model_cfg_path = os.path.join(PROJECT_DIR, "configs/model/T2I_all_model.py")
-    sd_model_name = 'all'
+    sd_model_name = 'majicmixRealv6Fp16' # 'all'
     unet_model_cfg_path = os.path.join(PROJECT_DIR, "./configs/model/motion_model.py")
     unet_model_name = 'musev_referencenet'
     torch_dtype = torch.float16
@@ -104,11 +101,11 @@ def Text2Video( device,
     lcm_model_cfg_path = os.path.join(PROJECT_DIR, "./configs/model/lcm_model.py")
     lcm_model_name = None
     referencenet_model_cfg_path = os.path.join(PROJECT_DIR, "./configs/model/referencenet.py")
-    referencenet_model_name = None
+    referencenet_model_name = 'musev_referencenet' # None
     ip_adapter_model_cfg_path = os.path.join(PROJECT_DIR, "./configs/model/ip_adapter.py")
-    ip_adapter_model_name = None
-    vision_clip_model_path = "./checkpoints/ip_adapter/models/image_encoder"
-    vision_clip_extractor_class_name = None
+    ip_adapter_model_name = 'musev_referencenet' # None
+    vision_clip_model_path = "./checkpoints/IP-Adapter/models/image_encoder"
+    vision_clip_extractor_class_name = 'ImageClipVisionFeatureExtractor' # None
     facein_model_cfg_path = os.path.join(PROJECT_DIR, "./configs/model/facein.py")
     facein_model_name = None
     ip_adapter_face_model_cfg_path = os.path.join(PROJECT_DIR, "./configs/model/ip_adapter.py")
@@ -462,7 +459,6 @@ def Text2Video( device,
 
         test_datas = [{
         'condition_images': image_path,
-        'eye_blinks_factor': 1.8,
         'ipadapter_image': image_path,
         'name': image_path,
         'prompt': prompt,
@@ -478,8 +474,8 @@ def Text2Video( device,
             prompt = prefix_prompt + prompt + suffix_prompt
             prompt_hash = get_signature_of_string(prompt, length=5)
             test_data["prompt_hash"] = prompt_hash
-            test_data_height = test_data.get("height", height)
-            test_data_width = test_data.get("width", width)
+            test_data_height = None
+            test_data_width = None
             test_data_condition_images_path = test_data.get("condition_images", None)
             test_data_condition_images_index = test_data.get("condition_images_index", None)
             test_data_redraw_condition_image = test_data.get(

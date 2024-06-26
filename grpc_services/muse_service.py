@@ -45,11 +45,10 @@ class MuseVService(musev_pb2_grpc.MuseVServicer):
                 output_dir=request.dest,
                 seed=None,
                 fps=request.fps,
-                w=request.width,
-                h=request.height,
                 video_len=request.length,
                 img_edge_ratio=request.scaleRatio,
-                motion_speed=1.0,
+                motion_speed=request.motionSpeed,
+                n_batch=request.batch,
             )
             dest = upload_to_minio(output_path, request.dest)
             self._gc()

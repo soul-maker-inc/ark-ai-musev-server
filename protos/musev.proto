@@ -17,13 +17,13 @@ message Img2VideoInputMsg {
   string ipadapterImage = 2;         // oss源文件路径名（原图），默认空
   string referImage = 3;         // oss源文件路径名（原图），默认空
   string prompt = 4;
-  int32 width = 5;
-  int32 height = 6;
-  float scaleRatio = 7;
-  float eyeBlinksFactor = 8;
-  string dest=9;
-  int32 fps = 10;
-  int32 length = 11;
+  float scaleRatio = 5;
+  float eyeBlinksFactor = 6;
+  string dest = 7;
+  int32 fps = 8;
+  int32 length = 9;
+  float motionSpeed = 10;
+  int32 batch = 11;
 }
 
 message Img2VideoResponse {
