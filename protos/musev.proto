@@ -10,6 +10,7 @@ package musev;
 
 service MuseV {
   rpc Generate(Img2VideoInputMsg) returns (Img2VideoResponse) {}
+  rpc GenerateAsync(Img2VideoAsyncInputMsg) returns (Img2VideoResponse) {}
 }
 
 message Img2VideoInputMsg {
@@ -24,6 +25,12 @@ message Img2VideoInputMsg {
   int32 length = 9;
   float motionSpeed = 10;
   int32 batch = 11;
+}
+
+message Img2VideoAsyncInputMsg {
+  Img2VideoInputMsg input = 1;
+  string progressCallback = 2;
+  string finishCallback = 3;
 }
 
 message Img2VideoResponse {

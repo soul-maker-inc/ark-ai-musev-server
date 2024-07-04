@@ -1,6 +1,7 @@
 import os
 import logging
 from musev import logger
+from threading import Thread
 
 from concurrent import futures
 import logging
@@ -24,6 +25,10 @@ def serve():
     logging.info("add musev service")
     s1 = MuseVService(MODEL_PATH, DEVICE)
     musev_pb2_grpc.add_MuseVServicer_to_server(s1, server)
+
+    logging.info("creating worker thread")
+    thread = Thread(target = s1.JobRoutine)
+    thread.start()
 
     SERVICE_NAMES = (
         musev_pb2.DESCRIPTOR.services_by_name['MuseV'].full_name,

@@ -1,18 +1,26 @@
-FROM anchorxia/musev:1.0.0
+FROM pytorch/pytorch:2.2.2-cuda12.1-cudnn8-runtime
+RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONTAINER_TIMEZONE > /etc/timezone
+RUN apt update -y && apt install --no-install-recommends -y tzdata build-essential ffmpeg libsm6 libxext6 nvidia-cuda-toolkit && rm -rf /var/lib/apt/lists/*
 
-#MAINTAINER 维护者信息
-LABEL MAINTAINER="anchorxia"
-LABEL Email="anchorxia@tencent.com"
-LABEL Description="musev gpu runtime image, base docker is pytorch/pytorch:2.0.1-cuda11.7-cudnn8-devel"
-ARG DEBIAN_FRONTEND=noninteractive
+RUN pip3 --no-cache-dir install -U torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
-USER root
+COPY requirements_docker.txt /tmp/requirements.txt
+RUN pip3 --no-cache-dir install -i https://mirrors.aliyun.com/pypi/simple -r /tmp/requirements.txt
 
-SHELL ["/bin/bash", "--login", "-c"]
+WORKDIR /app
+COPY . /app
 
-RUN . /opt/conda/etc/profile.d/conda.sh  \
-    && echo "source activate musev" >> ~/.bashrc \
-    && conda activate musev \
-    && conda env list \
-    && pip --no-cache-dir install cuid gradio==4.12 spaces
-USER root
+RUN pip3 --no-cache-dir install -e ./diffusers ./ip_adapter ./clip ./controlnet_aux ./MMCM
+
+ENV PORT 50051
+ENV MINIO_ENDPOINT=127.0.0.1:9000
+ENV MINIO_ACCESS_KEY=
+ENV MINIO_SECRET_KEY=
+ENV MINIO_BUCKET=
+ENV DEVICE=
+ENV SERVICE_PORT=
+
+VOLUME [ "/app/checkpoints" ]
+EXPOSE 50051
+
+CMD [ "python3","/app/musev_server.py" ]
